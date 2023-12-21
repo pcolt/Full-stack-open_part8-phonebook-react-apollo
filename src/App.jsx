@@ -1,29 +1,8 @@
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { useState } from 'react'
-
-const ALL_PERSONS = gql`
-query {
-  allPersons {
-    name
-    phone
-    id
-  }
-}
-`
-
-const FIND_PERSON = gql`
-  query findPersonByName($nameToSearch: String!) {
-  findPerson(name: $nameToSearch) {
-    name
-    phone
-    address {
-      street
-      city
-    }
-    id
-  }
-}
-`
+import PersonForm from './coponents/personForm'
+import { ALL_PERSONS, FIND_PERSON } from './queries'
+import PhoneForm from './coponents/phoneForm'
 
 const Person = ({ person, onClose }) => {
   return (
@@ -63,7 +42,18 @@ const Persons = ({ persons }) => {
 }
 
 const App = () => {
-  const result = useQuery(ALL_PERSONS)
+  const [errorMessage,  setErrorMessage] = useState(null)
+
+  const result = useQuery(ALL_PERSONS, {
+    pollInterval: 60000   // update every 60 seconds
+  })
+
+  const notify = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 1000)
+  }
 
   if (result.loading) {
     return <div>loading...</div>
@@ -71,7 +61,21 @@ const App = () => {
 
   return (
     <div>
+      <Notify errorMessage={errorMessage} />
       <Persons persons={result.data.allPersons} />
+      <PersonForm setError={notify}/>
+      <PhoneForm setError={notify}/>
+    </div>
+  )
+}
+
+const Notify = ({errorMessage}) => {
+  if ( !errorMessage) {
+    return null
+  } 
+  return (
+    <div style={{color: 'red'}}>
+      {errorMessage}
     </div>
   )
 }
