@@ -23,7 +23,10 @@ const Persons = ({ persons }) => {
   })
   if (nameToSearch && result.data) {
     return (
-      <Person person={result.data.findPerson} onClose={() => setNameToSearch(null)} />
+      <Person 
+        person={result.data.findPerson}
+        onClose={() => setNameToSearch(null)} 
+      />
     )
   }
   return (
@@ -52,7 +55,7 @@ const App = () => {
     setErrorMessage(message)
     setTimeout(() => {
       setErrorMessage(null)
-    }, 1000)
+    }, 2000)
   }
 
   if (result.loading) {
