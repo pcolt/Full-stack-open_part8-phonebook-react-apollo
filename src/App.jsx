@@ -1,48 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { useState } from 'react'
-import PersonForm from './coponents/personForm'
-import { ALL_PERSONS, FIND_PERSON } from './queries'
-import PhoneForm from './coponents/phoneForm'
+import PersonForm from './coponents/PersonForm'
+import { ALL_PERSONS } from './queries'
+import PhoneForm from './coponents/PhoneForm'
+import Persons from './coponents/Persons'
 
-const Person = ({ person, onClose }) => {
-  return (
-    <div>
-      <h2>{person.name}</h2>
-      <div>{person.phone}</div>
-      <div>{person.address.street} {person.address.city}</div>
-      <button onClick={onClose}>close</button>
-    </div>
-  )
-}
-
-const Persons = ({ persons }) => {
-  const [nameToSearch, setNameToSearch] = useState(null)
-  const result = useQuery(FIND_PERSON, {
-    variables: { nameToSearch },
-    skip: !nameToSearch,
-  })
-  if (nameToSearch && result.data) {
-    return (
-      <Person 
-        person={result.data.findPerson}
-        onClose={() => setNameToSearch(null)} 
-      />
-    )
-  }
-  return (
-    <div>
-      <h2>Persons</h2>
-      {persons.map(p =>
-        <div key={p.name}>
-          {p.name} {p.phone}
-          <button onClick={() => setNameToSearch(p.name)}>
-            show address 
-          </button>
-        </div>  
-      )}
-    </div>
-  )
-}
 
 const App = () => {
   const [errorMessage,  setErrorMessage] = useState(null)
@@ -55,7 +17,7 @@ const App = () => {
     setErrorMessage(message)
     setTimeout(() => {
       setErrorMessage(null)
-    }, 2000)
+    }, 5000)
   }
 
   if (result.loading) {
