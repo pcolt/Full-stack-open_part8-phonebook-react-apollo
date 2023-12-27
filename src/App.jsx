@@ -1,13 +1,18 @@
-import { useQuery } from '@apollo/client'
+import { useQuery, useApolloClient } from '@apollo/client'
 import { useState } from 'react'
+
 import PersonForm from './coponents/PersonForm'
-import { ALL_PERSONS } from './queries'
 import PhoneForm from './coponents/PhoneForm'
 import Persons from './coponents/Persons'
+import LoginForm from './coponents/LoginForm'
+
+import { ALL_PERSONS } from './queries'
 
 
 const App = () => {
   const [errorMessage,  setErrorMessage] = useState(null)
+  const [token, setToken] = useState(null)
+  const client = useApolloClient()
 
   const result = useQuery(ALL_PERSONS, {
     pollInterval: 60000   // update every 60 seconds
@@ -20,8 +25,27 @@ const App = () => {
     }, 5000)
   }
 
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
   if (result.loading) {
     return <div>loading...</div>
+  }
+
+  if (!token) {
+    return (
+      <div>
+        <Notify errorMessage={errorMessage} />
+        <h2>Login</h2>
+        <LoginForm 
+          setToken={setToken}
+          setError={notify}
+        />
+      </div>
+    )
   }
 
   return (
